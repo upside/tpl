@@ -1,0 +1,49 @@
+diff --git a/src/Core/Runtime/IRDebugger.php b/src/Core/Runtime/IRDebugger.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/Runtime/IRDebugger.php
+@@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\Runtime;
++
++use Upside\Tpl\Core\IR\IRBuilder;
++use Upside\Tpl\Core\IR\Compiler\PhpCodegen;
++use Upside\Tpl\Core\Lexer\Source;
++
++/**
++ * Utility class to compile templates using the experimental IR pipeline.
++ *
++ * This helper is intended for debugging and experimentation only. It does not
++ * affect the standard rendering path of Engine. It takes an Engine instance
++ * (to leverage lexer, parser and optimizer configuration), generates an AST,
++ * builds an IR control-flow graph, and returns the concatenated PHP code.
++ */
++final class IRDebugger
++{
++    /**
++     * Compile the given template to PHP using the IR pipeline.
++     *
++     * @param Engine       $engine   The engine whose configuration should be used.
++     * @param string|Source $template The template string or Source object.
++     *
++     * @return string Generated PHP code, or empty string if IR is empty.
++     */
++    public static function debugIrPhp(Engine $engine, string|Source $template): string
++    {
++        // Obtain the optimized AST using the engine's existing facilities.
++        $ast = $engine->debugOptimizedAst($template);
++
++        // Build IR from the AST.
++        $builder = new IRBuilder();
++        $cfg = $builder->build($ast);
++        if ($cfg === null) {
++            return '';
++        }
++
++        // Generate PHP code from the IR.
++        $codegen = new PhpCodegen();
++        return $codegen->generate($cfg);
++    }
++}
