@@ -1,0 +1,96 @@
+diff --git a/src/Core/IR/Instruction.php b/src/Core/IR/Instruction.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/IR/Instruction.php
+@@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR;
++
++/**
++ * Base class for IR instructions.
++ *
++ * Every instruction should implement toPhp() to generate PHP code.
++ */
++abstract class Instruction
++{
++    /**
++     * Convert this instruction to its PHP code representation.
++     */
++    abstract public function toPhp(): string;
++}
+
+diff --git a/src/Core/IR/BasicBlock.php b/src/Core/IR/BasicBlock.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/IR/BasicBlock.php
+@@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR;
++
++/**
++ * A basic block is a sequence of instructions with a single successor.
++ */
++class BasicBlock
++{
++    /**
++     * @var Instruction[]
++     */
++    private array $instructions = [];
++
++    /**
++     * @var BasicBlock|null
++     */
++    public ?BasicBlock $next = null;
++
++    /**
++     * Append an instruction to the block.
++     */
++    public function addInstruction(Instruction $instruction): void
++    {
++        $this->instructions[] = $instruction;
++    }
++
++    /**
++     * Get the instructions.
++     *
++     * @return Instruction[]
++     */
++    public function instructions(): array
++    {
++        return $this->instructions;
++    }
++}
+
+diff --git a/src/Core/IR/IRBuilder.php b/src/Core/IR/IRBuilder.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/IR/IRBuilder.php
+@@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR;
++
++use Upside\Tpl\Core\AST\Node;
++
++/**
++ * Builds an intermediate representation (IR) from the AST.
++ */
++class IRBuilder
++{
++    /**
++     * Build a chain of basic blocks from AST.
++     *
++     * @param Node $ast
++     * @return BasicBlock|null
++     */
++    public function build(Node $ast): ?BasicBlock
++    {
++        // TODO: implement actual conversion
++        return null;
++    }
++}
