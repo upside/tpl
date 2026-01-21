@@ -1,0 +1,46 @@
+diff --git a/src/Core/IR/Optimizer/MergeBlocksPass.php b/src/Core/IR/Optimizer/MergeBlocksPass.php
+new file mode 100644
+--- /dev/null
++++ b/src/Core/IR/Optimizer/MergeBlocksPass.php
+@@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR\Optimizer;
++
++use Upside\Tpl\Core\IR\BasicBlock;
++use Upside\Tpl\Core\IR\Optimizer\IrOptimizeContext;
++
++/**
++ * Optimizer pass that merges linear chains of basic blocks into a single block.
++ *
++ * This pass traverses the control-flow graph and concatenates instructions from
++ * subsequent blocks into the head block, eliminating redundant block boundaries.
++ */
++final class MergeBlocksPass implements IrOptimizerPass
++{
++    public function id(): string
++    {
++        return 'ir.merge_blocks';
++    }
++
++    public function version(): string
++    {
++        return '1';
++    }
++
++    public function optimize(BasicBlock $cfg, IrOptimizeContext $context): BasicBlock
++    {
++        $curr = $cfg;
++        // Flatten the linear chain of blocks by concatenating instructions.
++        while ($curr->next !== null) {
++            $next = $curr->next;
++            foreach ($next->instructions() as $instr) {
++                $curr->addInstruction($instr);
++            }
++            // Skip over the merged block.
++            $curr->next = $next->next;
++        }
++        return $cfg;
++    }
++}
