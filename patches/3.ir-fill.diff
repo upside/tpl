@@ -1,0 +1,228 @@
+diff --git a/src/Core/IR/BasicBlock.php b/src/Core/IR/BasicBlock.php
+index e69de29..a60d90a 100644
+--- a/src/Core/IR/BasicBlock.php
++++ b/src/Core/IR/BasicBlock.php
+@@ -0,0 +1,38 @@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR;
++
++/**
++ * A basic block is a sequence of instructions with a single successor.
++ */
++class BasicBlock
++{
++    /**
++     * @var Instruction[]
++     */
++    private array $instructions = [];
++
++    /**
++     * @var BasicBlock|null
++     */
++    public ?BasicBlock $next = null;
++
++    /**
++     * Append an instruction to the block.
++     */
++    public function addInstruction(Instruction $instruction): void
++    {
++        $this->instructions[] = $instruction;
++    }
++
++    /**
++     * Get the instructions.
++     *
++     * @return Instruction[]
++     */
++    public function instructions(): array
++    {
++        return $this->instructions;
++    }
++}
+diff --git a/src/Core/IR/IRBuilder.php b/src/Core/IR/IRBuilder.php
+index e69de29..5b0082d 100644
+--- a/src/Core/IR/IRBuilder.php
++++ b/src/Core/IR/IRBuilder.php
+@@ -0,0 +1,24 @@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR;
++
++use Upside\Tpl\Core\AST\Node;
++
++/**
++ * Builds an intermediate representation (IR) from the AST.
++ */
++class IRBuilder
++{
++    /**
++     * Build a chain of basic blocks from AST.
++     *
++     * @param Node $ast
++     * @return BasicBlock|null
++     */
++    public function build(Node $ast): ?BasicBlock
++    {
++        // TODO: implement actual conversion
++        return null;
++    }
++}
+diff --git a/src/Core/IR/Instruction.php b/src/Core/IR/Instruction.php
+index e69de29..8e16b32 100644
+--- a/src/Core/IR/Instruction.php
++++ b/src/Core/IR/Instruction.php
+@@ -0,0 +1,17 @@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR;
++
++/**
++ * Base class for IR instructions.
++ *
++ * Every instruction should implement toPhp() to generate PHP code.
++ */
++abstract class Instruction
++{
++    /**
++     * Convert this instruction to its PHP code representation.
++     */
++    abstract public function toPhp(): string;
++}
+diff --git a/src/Core/IR/Optimizer/IrOptimizeContext.php b/src/Core/IR/Optimizer/IrOptimizeContext.php
+index e69de29..ad3346a 100644
+--- a/src/Core/IR/Optimizer/IrOptimizeContext.php
++++ b/src/Core/IR/Optimizer/IrOptimizeContext.php
+@@ -0,0 +1,29 @@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR\Optimizer;
++
++use Upside\Tpl\Core\Runtime\Engine;
++
++/**
++ * Context passed to IR optimization passes.
++ *
++ * Provides access to the engine and per-pass options.
++ */
++final class IrOptimizeContext
++{
++    public function __construct(
++        public readonly Engine $env,
++        public readonly string $passId
++    ) {}
++
++    /**
++     * Retrieve options for the current pass from the engine.
++     *
++     * @return array<mixed>
++     */
++    public function options(): array
++    {
++        return $this->env->optimizerOptions($this->passId);
++    }
++}
+diff --git a/src/Core/IR/Optimizer/IrOptimizerPass.php b/src/Core/IR/Optimizer/IrOptimizerPass.php
+index e69de29..7ee3451 100644
+--- a/src/Core/IR/Optimizer/IrOptimizerPass.php
++++ b/src/Core/IR/Optimizer/IrOptimizerPass.php
+@@ -0,0 +1,32 @@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR\Optimizer;
++
++use Upside\Tpl\Core\IR\BasicBlock;
++
++/**
++ * Interface for IR optimization passes.
++ */
++interface IrOptimizerPass
++{
++    /**
++     * Return the unique identifier of this optimization pass.
++     */
++    public function id(): string;
++
++    /**
++     * Return a version string. When the implementation changes,
++     * this should be bumped to invalidate cached results.
++     */
++    public function version(): string;
++
++    /**
++     * Optimize a BasicBlock graph.
++     *
++     * @param BasicBlock $cfg  Entry block of the control-flow graph.
++     * @param IrOptimizeContext $context  Context with environment and options.
++     * @return BasicBlock  Optimized control-flow graph.
++     */
++    public function optimize(BasicBlock $cfg, IrOptimizeContext $context): BasicBlock;
++}
+diff --git a/src/Core/IR/Optimizer/IrOptimizerRegistry.php b/src/Core/IR/Optimizer/IrOptimizerRegistry.php
+index e69de29..6e3b1f7 100644
+--- a/src/Core/IR/Optimizer/IrOptimizerRegistry.php
++++ b/src/Core/IR/Optimizer/IrOptimizerRegistry.php
+@@ -0,0 +1,58 @@
++<?php
++declare(strict_types=1);
++
++namespace Upside\Tpl\Core\IR\Optimizer;
++
++/**
++ * Registry for IR optimization passes.
++ *
++ * Allows adding passes with priorities and retrieving them in sorted order.
++ * Also computes a signature for caching purposes.
++ */
++final class IrOptimizerRegistry
++{
++    /**
++     * @var array<string, array{pass: IrOptimizerPass, priority: int}>
++     */
++    private array $passes = [];
++
++    public function add(IrOptimizerPass $pass, int $priority = 0): void
++    {
++        $this->passes[$pass->id()] = ['pass' => $pass, 'priority' => $priority];
++    }
++
++    /**
++     * @return list<IrOptimizerPass>
++     */
++    public function allSorted(): array
++    {
++        $list = array_values($this->passes);
++        usort($list, function ($a, $b) {
++            if ($a['priority'] === $b['priority']) {
++                return strcmp($a['pass']->id(), $b['pass']->id());
++            }
++            return $b['priority'] <=> $a['priority'];
++        });
++        return array_map(fn($x) => $x['pass'], $list);
++    }
++
++    /**
++     * Compute a cache signature based on registered passes and options.
++     *
++     * @param array<string, mixed> $optionsById
++     * @return string
++     */
++    public function signature(array $optionsById): string
++    {
++        $data = [];
++        foreach ($this->allSorted() as $pass) {
++            $id = $pass->id();
++            $data[] = [
++                'id'  => $id,
++                'ver' => $pass->version(),
++                'opt' => $optionsById[$id] ?? [],
++            ];
++        }
++        return hash('xxh3', json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
++    }
++}
