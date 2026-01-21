@@ -14,17 +14,23 @@ use Upside\Tpl\MiniTwig\Nodes\IfNode;
  *  Tags: if / for / include (каждый получает ExprParser через конструктор)
  * ------------------------------------------------------------------------- */
 
-final class IfTag implements TagHandler {
+final class IfTag implements TagHandler
+{
     public function __construct(private readonly ExprParser $expr) {}
-    public function name(): string { return 'if'; }
 
-    public function parse(ParseContext $c): Node {
+    public function name(): string
+    {
+        return 'if';
+    }
+
+    public function parse(ParseContext $c): Node
+    {
         $cond = $this->expr->parse($c->ts);
         $c->ts->expect(Tok::TAG_END);
 
         $branches = [];
-        $body = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['elseif','else','endif']));
-        $branches[] = ['cond'=>$cond, 'body'=>$body];
+        $body = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['elseif', 'else', 'endif']));
+        $branches[] = ['cond' => $cond, 'body' => $body];
 
         while (self::isTagAhead($c->ts, ['elseif'])) {
             $c->ts->expect(Tok::TAG_START);
@@ -33,8 +39,8 @@ final class IfTag implements TagHandler {
             $cc = $this->expr->parse($c->ts);
             $c->ts->expect(Tok::TAG_END);
 
-            $bb = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['elseif','else','endif']));
-            $branches[] = ['cond'=>$cc, 'body'=>$bb];
+            $bb = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['elseif', 'else', 'endif']));
+            $branches[] = ['cond' => $cc, 'body' => $bb];
         }
 
         $elseBody = null;
@@ -53,7 +59,8 @@ final class IfTag implements TagHandler {
         return new IfNode($branches, $elseBody);
     }
 
-    private static function isTagAhead(TokenStream $ts, array $names): bool {
+    private static function isTagAhead(TokenStream $ts, array $names): bool
+    {
         if (!$ts->test(Tok::TAG_START)) return false;
         $la = $ts->la(1);
         return $la->type === Tok::NAME && in_array((string)$la->value, $names, true);

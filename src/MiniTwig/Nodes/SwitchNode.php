@@ -11,6 +11,6 @@ final readonly class SwitchNode implements Node
     public function __construct(
         public Expr $expr,
         public array $cases,
-        public ?SequenceNode $defaultBody
+        public ?SequenceNode $defaultBody,
     ) {}
 }

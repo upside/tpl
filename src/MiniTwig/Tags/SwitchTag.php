@@ -13,7 +13,10 @@ final class SwitchTag implements TagHandler
 {
     public function __construct(private readonly ExprParser $expr) {}
 
-    public function name(): string { return 'switch'; }
+    public function name(): string
+    {
+        return 'switch';
+    }
 
     public function parse(ParseContext $c): SwitchNode
     {
@@ -30,7 +33,7 @@ final class SwitchTag implements TagHandler
             if ($name === 'case') {
                 $caseExpr = $this->expr->parse($c->ts);
                 $c->ts->expect(Tok::TAG_END);
-                $body = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['case','default','endswitch']));
+                $body = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['case', 'default', 'endswitch']));
                 $cases[] = ['expr' => $caseExpr, 'body' => $body];
                 continue;
             }

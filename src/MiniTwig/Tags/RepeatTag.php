@@ -13,7 +13,10 @@ final class RepeatTag implements TagHandler
 {
     public function __construct(private readonly ExprParser $expr) {}
 
-    public function name(): string { return 'repeat'; }
+    public function name(): string
+    {
+        return 'repeat';
+    }
 
     public function parse(ParseContext $c): RepeatNode
     {

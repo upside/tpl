@@ -5,6 +5,7 @@ namespace Upside\Tpl\MiniTwig\Nodes;
 
 use Upside\Tpl\Core\AST\{Expr, Node};
 
-final readonly class IncludeNode implements Node {
+final readonly class IncludeNode implements Node
+{
     public function __construct(public Expr $templateExpr) {}
 }

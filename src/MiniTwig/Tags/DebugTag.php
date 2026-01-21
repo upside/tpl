@@ -12,7 +12,10 @@ final class DebugTag implements TagHandler
 {
     public function __construct(private readonly ExprParser $expr) {}
 
-    public function name(): string { return 'debug'; }
+    public function name(): string
+    {
+        return 'debug';
+    }
 
     public function parse(ParseContext $c): DebugNode
     {

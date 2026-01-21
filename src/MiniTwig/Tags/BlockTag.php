@@ -10,7 +10,10 @@ use Upside\Tpl\MiniTwig\Nodes\BlockNode;
 
 final class BlockTag implements TagHandler
 {
-    public function name(): string { return 'block'; }
+    public function name(): string
+    {
+        return 'block';
+    }
 
     public function parse(ParseContext $c): BlockNode
     {

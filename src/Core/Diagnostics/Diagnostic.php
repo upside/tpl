@@ -5,13 +5,15 @@ namespace Upside\Tpl\Core\Diagnostics;
 
 use Upside\Tpl\Core\Lexer\{Source, Span};
 
-final class Diagnostic {
-    public static function render(Source $src, Span $sp, int $contextLines = 2): string {
+final class Diagnostic
+{
+    public static function render(Source $src, Span $sp, int $contextLines = 2): string
+    {
         $lines = preg_split("/\r\n|\n|\r/", $src->code) ?: [''];
         $lineIdx = max(1, $sp->startLine);
 
         $start = max(1, $lineIdx - $contextLines);
-        $end   = min(count($lines), $lineIdx + $contextLines);
+        $end = min(count($lines), $lineIdx + $contextLines);
 
         $pad = strlen((string)$end);
         $out = [];

@@ -9,6 +9,7 @@ use Upside\Tpl\Core\Lexer\Source;
  *  Loader (для include/extends и т.п.)
  * ------------------------------------------------------------------------- */
 
-interface TemplateLoader {
+interface TemplateLoader
+{
     public function load(string $name): Source;
 }

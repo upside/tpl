@@ -8,10 +8,12 @@ use Upside\Tpl\Core\Lexer\TokenStream;
 use Upside\Tpl\Core\Parser\ParserException;
 use Upside\Tpl\MiniTwig\Lexer\Tok;
 
-final class ExprParser {
+final class ExprParser
+{
     public function __construct(private readonly OperatorTable $ops) {}
 
-    public function parse(TokenStream $ts, int $minBp = 0): Expr {
+    public function parse(TokenStream $ts, int $minBp = 0): Expr
+    {
         $left = $this->prefix($ts);
 
         while (true) {
@@ -48,7 +50,8 @@ final class ExprParser {
         return $left;
     }
 
-    private function parseCall(TokenStream $ts, Expr $callee): Expr {
+    private function parseCall(TokenStream $ts, Expr $callee): Expr
+    {
         $ts->expect(Tok::PUNCT, '(');
         $args = [];
         if (!$ts->test(Tok::PUNCT, ')')) {
@@ -62,7 +65,8 @@ final class ExprParser {
         return new CallExpr($callee, $args);
     }
 
-    private function parseFilter(TokenStream $ts, Expr $input): Expr {
+    private function parseFilter(TokenStream $ts, Expr $input): Expr
+    {
         $nameTok = $ts->expect(Tok::NAME);
         $args = [];
         if ($ts->test(Tok::PUNCT, '(')) {
@@ -72,7 +76,8 @@ final class ExprParser {
     }
 
     /** @return list<Expr> */
-    private function parseCallArgs(TokenStream $ts): array {
+    private function parseCallArgs(TokenStream $ts): array
+    {
         $ts->expect(Tok::PUNCT, '(');
         $args = [];
         if (!$ts->test(Tok::PUNCT, ')')) {
@@ -86,11 +91,18 @@ final class ExprParser {
         return $args;
     }
 
-    private function prefix(TokenStream $ts): Expr {
+    private function prefix(TokenStream $ts): Expr
+    {
         $t = $ts->cur();
 
-        if ($t->type === Tok::NUMBER) { $ts->next(); return new LitExpr($t->value); }
-        if ($t->type === Tok::STRING) { $ts->next(); return new LitExpr($t->value); }
+        if ($t->type === Tok::NUMBER) {
+            $ts->next();
+            return new LitExpr($t->value);
+        }
+        if ($t->type === Tok::STRING) {
+            $ts->next();
+            return new LitExpr($t->value);
+        }
 
         if ($t->type === Tok::NAME) {
             $name = (string)$t->value;
@@ -103,9 +115,9 @@ final class ExprParser {
             }
             $ts->next();
             return match ($name) {
-                'true' => new LitExpr(true),
+                'true'  => new LitExpr(true),
                 'false' => new LitExpr(false),
-                'null' => new LitExpr(null),
+                'null'  => new LitExpr(null),
                 default => new NameExpr($name),
             };
         }

@@ -7,8 +7,10 @@ namespace Upside\Tpl\Core\Runtime;
  *  AST Dumper (отладка)
  * ------------------------------------------------------------------------- */
 
-final class AstDumper {
-    public static function dump(mixed $v, int $indent = 0, ?\SplObjectStorage $seen = null): string {
+final class AstDumper
+{
+    public static function dump(mixed $v, int $indent = 0, ?\SplObjectStorage $seen = null): string
+    {
         $seen ??= new \SplObjectStorage();
         $pad = str_repeat('  ', $indent);
 
@@ -17,7 +19,7 @@ final class AstDumper {
         if (is_int($v) || is_float($v)) return $pad . (string)$v;
 
         if (is_string($v)) {
-            $s = str_replace(["\n","\r","\t"], ["\\n","\\r","\\t"], $v);
+            $s = str_replace(["\n", "\r", "\t"], ["\\n", "\\r", "\\t"], $v);
             if (strlen($s) > 140) $s = substr($s, 0, 140) . '…';
             return $pad . '"' . $s . '"';
         }
@@ -48,7 +50,10 @@ final class AstDumper {
             foreach ($props as $p) {
                 $name = $p->getName();
                 $val = '*unreadable*';
-                try { $val = $p->getValue($v); } catch (\Throwable) {}
+                try {
+                    $val = $p->getValue($v);
+                } catch (\Throwable) {
+                }
                 $out[] = $pad . "  {$name}:";
                 $out[] = self::dump($val, $indent + 2, $seen);
             }

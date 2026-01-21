@@ -14,14 +14,17 @@ final class UnlessTag implements TagHandler
 {
     public function __construct(private readonly ExprParser $expr) {}
 
-    public function name(): string { return 'unless'; }
+    public function name(): string
+    {
+        return 'unless';
+    }
 
     public function parse(ParseContext $c): Node
     {
         $cond = $this->expr->parse($c->ts);
         $c->ts->expect(Tok::TAG_END);
 
-        $body = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['else','endunless']));
+        $body = $c->subparse(fn(ParseContext $cx) => self::isTagAhead($cx->ts, ['else', 'endunless']));
 
         $elseBody = null;
         if (self::isTagAhead($c->ts, ['else'])) {

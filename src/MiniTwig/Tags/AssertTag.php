@@ -12,7 +12,10 @@ final class AssertTag implements TagHandler
 {
     public function __construct(private readonly ExprParser $expr) {}
 
-    public function name(): string { return 'assert'; }
+    public function name(): string
+    {
+        return 'assert';
+    }
 
     public function parse(ParseContext $c): AssertNode
     {

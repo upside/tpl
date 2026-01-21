@@ -8,16 +8,19 @@ use Upside\Tpl\Core\Lexer\CoreTok;
 use Upside\Tpl\Core\Lexer\TokenStream;
 use Upside\Tpl\Core\Runtime\Engine;
 
-final class Parser {
+final class Parser
+{
     public function __construct(private readonly ParserRegistry $reg) {}
 
-    public function parse(TokenStream $ts, Engine $env): SequenceNode {
+    public function parse(TokenStream $ts, Engine $env): SequenceNode
+    {
         $ctx = new ParseContext($this, $ts, $env);
         return $this->subparse($ctx, fn(ParseContext $c) => $c->ts->test(CoreTok::EOF));
     }
 
     /** @param callable(ParseContext):bool $stop */
-    public function subparse(ParseContext $ctx, callable $stop): SequenceNode {
+    public function subparse(ParseContext $ctx, callable $stop): SequenceNode
+    {
         $nodes = [];
 
         while (!$stop($ctx)) {

@@ -10,6 +10,6 @@ final readonly class CallExpr implements Expr
     /** @param list<Expr> $args */
     public function __construct(
         public Expr $callee,
-        public array $args
+        public array $args,
     ) {}
 }

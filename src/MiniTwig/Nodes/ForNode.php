@@ -5,7 +5,8 @@ namespace Upside\Tpl\MiniTwig\Nodes;
 
 use Upside\Tpl\Core\AST\{Expr, Node, SequenceNode};
 
-final readonly class ForNode implements Node {
+final readonly class ForNode implements Node
+{
     public function __construct(
         public string $varName,
         public Expr $iterable,

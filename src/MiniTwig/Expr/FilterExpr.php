@@ -11,6 +11,6 @@ final readonly class FilterExpr implements Expr
     public function __construct(
         public Expr $input,
         public string $name,
-        public array $args
+        public array $args,
     ) {}
 }

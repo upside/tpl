@@ -9,7 +9,9 @@ use Upside\Tpl\Core\AST\Node;
  *  Parser framework (recursive descent + subparse)
  * ------------------------------------------------------------------------- */
 
-interface StatementParser {
+interface StatementParser
+{
     public function supports(ParseContext $c): bool;
+
     public function parse(ParseContext $c): Node;
 }

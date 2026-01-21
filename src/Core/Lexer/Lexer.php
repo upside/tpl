@@ -3,14 +3,16 @@ declare(strict_types=1);
 
 namespace Upside\Tpl\Core\Lexer;
 
-final class Lexer {
+final class Lexer
+{
     public function __construct(
         private readonly LexerState $s,
         private readonly RuleSet $rules
     ) {}
 
     /** @return list<Token> */
-    public function tokenize(): array {
+    public function tokenize(): array
+    {
         $out = [];
 
         while (true) {

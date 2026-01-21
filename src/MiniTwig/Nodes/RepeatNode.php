@@ -9,6 +9,6 @@ final readonly class RepeatNode implements Node
 {
     public function __construct(
         public Expr $countExpr,
-        public SequenceNode $body
+        public SequenceNode $body,
     ) {}
 }

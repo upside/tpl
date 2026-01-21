@@ -10,6 +10,6 @@ final readonly class ExtendsNode implements Node
     /** @param list<BlockNode> $blocks */
     public function __construct(
         public Expr $templateExpr,
-        public array $blocks
+        public array $blocks,
     ) {}
 }

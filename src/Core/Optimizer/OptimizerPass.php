@@ -9,8 +9,11 @@ use Upside\Tpl\Core\AST\Node;
  *  Optimizer pipeline
  * ------------------------------------------------------------------------- */
 
-interface OptimizerPass {
+interface OptimizerPass
+{
     public function id(): string;
+
     public function version(): string;
+
     public function optimize(Node $ast, OptimizeContext $c): Node;
 }

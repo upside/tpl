@@ -10,7 +10,9 @@ use Upside\Tpl\Core\Parser\ParseContext;
  *  Tag system
  * ------------------------------------------------------------------------- */
 
-interface TagHandler {
+interface TagHandler
+{
     public function name(): string;
+
     public function parse(ParseContext $c): Node;
 }

@@ -7,17 +7,20 @@ namespace Upside\Tpl\Core\Runtime;
  *  File cache (compiled PHP)
  * ------------------------------------------------------------------------- */
 
-final class FileTemplateCache {
+final class FileTemplateCache
+{
     public function __construct(private readonly string $dir) {}
 
-    public function pathFor(string $key): string {
+    public function pathFor(string $key): string
+    {
         $a = substr($key, 0, 2);
         $b = substr($key, 2, 2);
         $d = rtrim($this->dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $a . DIRECTORY_SEPARATOR . $b;
         return $d . DIRECTORY_SEPARATOR . $key . '.php';
     }
 
-    public function load(string $key): ?\Closure {
+    public function load(string $key): ?\Closure
+    {
         $path = $this->pathFor($key);
         if (!is_file($path)) return null;
 
@@ -25,7 +28,8 @@ final class FileTemplateCache {
         return $v instanceof \Closure ? $v : null;
     }
 
-    public function store(string $key, string $php): \Closure {
+    public function store(string $key, string $php): \Closure
+    {
         $path = $this->pathFor($key);
         $dir = dirname($path);
         if (!is_dir($dir)) @mkdir($dir, 0777, true);

@@ -10,13 +10,18 @@ use Upside\Tpl\Core\Lexer\{LexerRule, LexerState, Token};
  *  Syntax передаётся через конструктор.
  * ------------------------------------------------------------------------- */
 
-final class DataRule implements LexerRule {
+final class DataRule implements LexerRule
+{
     public function __construct(private readonly Syntax $syn) {}
 
-    public function supports(LexerState $s): bool { return $s->mode() === 'DATA'; }
+    public function supports(LexerState $s): bool
+    {
+        return $s->mode() === 'DATA';
+    }
 
     /** @return list<Token> */
-    public function lex(LexerState $s): array {
+    public function lex(LexerState $s): array
+    {
         $syn = $this->syn;
 
         if ($s->startsWith($syn->comStart)) {

@@ -5,15 +5,18 @@ namespace Upside\Tpl\MiniTwig\Lexer;
 
 use Upside\Tpl\Core\Lexer\{LexerRule, LexerState, Token};
 
-final class CodeRule implements LexerRule {
+final class CodeRule implements LexerRule
+{
     public function __construct(private readonly Syntax $syn) {}
 
-    public function supports(LexerState $s): bool {
+    public function supports(LexerState $s): bool
+    {
         return $s->mode() === 'VAR' || $s->mode() === 'TAG';
     }
 
     /** @return list<Token> */
-    public function lex(LexerState $s): array {
+    public function lex(LexerState $s): array
+    {
         $syn = $this->syn;
 
         if ($s->mode() === 'VAR' && $s->startsWith($syn->varEnd)) {
@@ -64,8 +67,12 @@ final class CodeRule implements LexerRule {
                 if ($ch === '\\') {
                     $n = $s->advance();
                     $buf .= match ($n) {
-                        'n' => "\n", 'r' => "\r", 't' => "\t",
-                        '\\' => '\\', '"' => '"', "'" => "'",
+                        'n'     => "\n",
+                        'r'     => "\r",
+                        't'     => "\t",
+                        '\\'    => '\\',
+                        '"'     => '"',
+                        "'"     => "'",
                         default => $n,
                     };
                     continue;

@@ -7,7 +7,8 @@ use Upside\Tpl\Core\AST\SequenceNode;
 use Upside\Tpl\Core\Lexer\TokenStream;
 use Upside\Tpl\Core\Runtime\Engine;
 
-final class ParseContext {
+final class ParseContext
+{
     public function __construct(
         private readonly Parser $parser,
         public readonly TokenStream $ts,
@@ -15,7 +16,8 @@ final class ParseContext {
     ) {}
 
     /** @param callable(ParseContext):bool $stop */
-    public function subparse(callable $stop): SequenceNode {
+    public function subparse(callable $stop): SequenceNode
+    {
         return $this->parser->subparse($this, $stop);
     }
 }

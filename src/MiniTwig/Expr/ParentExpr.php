@@ -5,6 +5,4 @@ namespace Upside\Tpl\MiniTwig\Expr;
 
 use Upside\Tpl\Core\AST\Expr;
 
-final readonly class ParentExpr implements Expr
-{
-}
+final readonly class ParentExpr implements Expr {}

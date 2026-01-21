@@ -9,4 +9,7 @@ use Upside\Tpl\Core\AST\Node;
  *  AST nodes
  * ------------------------------------------------------------------------- */
 
-final readonly class TextNode implements Node { public function __construct(public string $text) {} }
+final readonly class TextNode implements Node
+{
+    public function __construct(public string $text) {}
+}
